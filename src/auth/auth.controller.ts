@@ -1,6 +1,7 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -39,6 +40,15 @@ export class AuthController {
       message: 'Kakao login successful',
       user,
       token: jwt,
+    };
+  }
+
+  @Post('signup')
+  async signUp(@Body() createUserDto: CreateUserDto) {
+    const user = await this.authService.signUp(createUserDto);
+    return {
+      message: '회원가입 성공',
+      user,
     };
   }
 }

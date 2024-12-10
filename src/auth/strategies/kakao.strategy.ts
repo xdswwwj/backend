@@ -20,10 +20,11 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
   ): Promise<any> {
     const { id, username, _json: kakaoAccount } = profile;
     const user = {
-      id,
-      username,
+      provider: 'kakao',
+      providerId: id,
       email: kakaoAccount.kakao_account.email,
-      profileImage: kakaoAccount.properties.profile_image,
+      name: username,
+      image: kakaoAccount.properties.profile_image,
       accessToken,
     };
     done(null, user);
