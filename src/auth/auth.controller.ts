@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Body,
+  ConflictException,
   Controller,
   Get,
   Post,
@@ -11,6 +12,10 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
+import {
+  createErrorResponse,
+  createSuccessResponse,
+} from 'src/helpers/apiResponse.helper';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
@@ -22,32 +27,38 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly jwtService: JwtService,
   ) {}
-  // @Get('google')
-  // @UseGuards(AuthGuard('google'))
-  // async googleLogin() {
-  //   // Google OAuth 페이지로 리다이렉트
-  // }
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  async googleLogin() {
+    // Google OAuth 페이지로 리다이렉트
+  }
 
-  // @Get('google/redirect')
-  // @UseGuards(AuthGuard('google'))
-  // async googleLoginRedirect(@Req() req) {
-  //   const { providerId } = req.user;
+  @Get('google/redirect')
+  @UseGuards(AuthGuard('google'))
+  async googleLoginRedirect(@Req() req) {
+    const { providerId } = req.user;
 
-  //   try {
-  //     // 기존 사용자 로그인
-  //     const result = await this.authService.socialLogin('google', providerId);
-  //     return result;
-  //   } catch (error) {
-  //     throw new ConflictException('회원가입 후 연동할 수 있습니다.');
-  //   }
-  //   // const jwt = this.authService.generateJwt(req.user);
-  //   // // Google로 부터 사용자 정보 반환
-  //   // return {
-  //   //   message: 'Google login successful',
-  //   //   user: req.user,
-  //   //   token: jwt,
-  //   // };
-  // }
+    try {
+      // 기존 사용자 로그인
+      const result = await this.authService.socialLogin({
+        provider: 'google',
+        providerId,
+      });
+      return {
+        result,
+        user: req.user,
+      };
+    } catch (error) {
+      throw new ConflictException('회원가입 후 연동할 수 있습니다.');
+    }
+    // const jwt = this.authService.generateJwt(req.user);
+    // // Google로 부터 사용자 정보 반환
+    // return {
+    //   message: 'Google login successful',
+    //   user: req.user,
+    //   token: jwt,
+    // };
+  }
 
   @Get('kakao')
   @UseGuards(AuthGuard('kakao'))
@@ -60,38 +71,23 @@ export class AuthController {
   async kakaoLoginRedirect(@Req() req) {
     try {
       const { provider, providerId, name, image } = req.user;
-      // Step 1: providerId로 사용자 확인
-      let user = await this.authService.findUserByProviderId(
+      const accessToken = await this.authService.handleSocialLogin({
         provider,
         providerId,
-      );
-      console.log('user >>', user);
+        name,
+        image,
+      });
 
-      // Step 2: 새로운 사용자 생성
-      if (!user) {
-        user = await this.authService.createUser({
-          userId: providerId,
-          name,
-          image,
-          provider,
-          providerId,
-          password: '',
-          passwordConfirm: '',
-        });
-      }
-
-      const accessToken = this.authService.generateJwt(user.id);
-
-      return {
-        user,
+      return createSuccessResponse({
         accessToken,
-      };
+      });
     } catch (error) {
       console.log(error);
 
-      return {
-        error,
-      };
+      return createErrorResponse({
+        message: 'server error',
+        code: 500,
+      });
     }
   }
 

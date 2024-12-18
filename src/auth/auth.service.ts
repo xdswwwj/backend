@@ -8,6 +8,7 @@ import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { SocialLoginDto } from './dto/social-login.dto';
+import { SocialLoginAndRegisterDto } from './dto/socialLoginAndRegister.dto';
 
 @Injectable()
 export class AuthService {
@@ -226,5 +227,27 @@ export class AuthService {
     });
 
     console.log(updateUserStatus);
+  }
+
+  async handleSocialLogin(
+    socialLoginAndRegisterDto: SocialLoginAndRegisterDto,
+  ) {
+    const { provider, providerId, name, image } = socialLoginAndRegisterDto;
+
+    let user = await this.findUserByProviderId(provider, providerId);
+
+    if (!user) {
+      user = await this.createUser({
+        userId: providerId,
+        name,
+        image,
+        provider,
+        providerId,
+        password: '',
+        passwordConfirm: '',
+      });
+    }
+
+    return this.generateJwt(user);
   }
 }
