@@ -24,6 +24,6 @@ import { PrismaService } from './prisma/prisma.service';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(morgan('combined', { stream: morganStream })).forRoutes('*'); // 모든 라우트에 적용
+    consumer.apply(morgan('combined', { stream: morganStream })).forRoutes('*');
   }
 }
