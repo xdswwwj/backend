@@ -19,7 +19,6 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
     done: Function,
   ): Promise<any> {
     const { id, username, _json: kakaoAccount } = profile;
-    console.log('profile >>', profile);
     const user = {
       provider: 'kakao',
       providerId: String(id),
