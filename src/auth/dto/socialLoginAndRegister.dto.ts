@@ -2,11 +2,11 @@ import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class SocialLoginAndRegisterDto {
   @IsString()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'provider 값이 존재하지 않습니다.' })
   provider: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'providerId 값이 존재하지 않습니다.' })
   providerId: string;
 
   @IsString()
