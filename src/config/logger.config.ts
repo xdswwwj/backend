@@ -18,8 +18,7 @@ const deleteOldLogs = () => {
     const match = file.match(/app-(\d{4}-\d{2}-\d{2})\.log$/);
     if (match) {
       const logDate = new Date(match[1]);
-      const ageInDays =
-        (now.getTime() - logDate.getTime()) / (1000 * 60 * 60 * 24);
+      const ageInDays = (now.getTime() - logDate.getTime()) / (1000 * 60 * 60 * 24);
 
       if (ageInDays > retentionDays) {
         const filePath = path.join(logDirectory, file);
@@ -56,18 +55,12 @@ export const winstonLogger = winston.createLogger({
     }),
     new winston.transports.File({
       filename: `logs/app-${getDateString()}.log`,
-      format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.json(),
-      ),
+      format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
     }),
     new winston.transports.File({
       filename: `logs/error-${getDateString()}.log`,
       level: 'error',
-      format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.json(),
-      ),
+      format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
     }),
   ],
 });
