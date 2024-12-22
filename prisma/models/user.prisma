@@ -3,6 +3,7 @@ model User {
   userId     String   @unique
   name       String?
   email      String?  @unique
+  phone      String?  @unique
   image      String?
   provider   String?
   providerId String?  @unique
