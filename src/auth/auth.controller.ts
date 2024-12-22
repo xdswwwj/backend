@@ -1,24 +1,10 @@
-import {
-  Body,
-  ConflictException,
-  Controller,
-  Get,
-  Post,
-  Req,
-  Request,
-  UnauthorizedException,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
-import {
-  createErrorResponse,
-  createSuccessResponse,
-} from 'src/helpers/apiResponse.helper';
+import { createErrorResponse, createSuccessResponse } from 'src/helpers/apiResponse.helper';
 import { AuthService } from './auth.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { LoginUserDto } from './dto/login-user.dto';
-import { SocialLoginDto } from './dto/social-login.dto';
+import { CreateUserDto } from './dto/createUser.dto';
+import { LoginUserDto } from './dto/loginUser.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -35,20 +21,22 @@ export class AuthController {
   @Get('google/redirect')
   @UseGuards(AuthGuard('google'))
   async googleLoginRedirect(@Req() req) {
-    const { providerId } = req.user;
-
     try {
-      // 기존 사용자 로그인
-      const result = await this.authService.socialLogin({
-        provider: 'google',
+      const { provider, providerId, name, image } = req.user;
+      const accessToken = await this.authService.handleSocialLogin({
+        provider,
         providerId,
+        name,
+        image,
       });
-      return {
-        result,
-        user: req.user,
-      };
+
+      return createSuccessResponse({
+        accessToken,
+      });
     } catch (error) {
-      throw new ConflictException('회원가입 후 연동할 수 있습니다.');
+      console.log(error);
+
+      return createErrorResponse(error);
     }
   }
 
@@ -103,66 +91,16 @@ export class AuthController {
     }
   }
 
-  @Post('refresh')
+  @Post('refresh-token')
   async refreshToken(@Body('refreshToken') token: string) {
     try {
       const payload = this.jwtService.verify(token, {
         secret: process.env.JWT_SECRET,
       });
-      const newAccessToken = this.jwtService.sign(
-        { id: payload.id, loginId: payload.loginId },
-        { expiresIn: '1h' },
-      );
-      return { accessToken: newAccessToken };
-    } catch (e) {
-      throw new UnauthorizedException('리프레시 토큰이 유효하지 않습니다.');
+      const newAccessToken = this.jwtService.sign({ id: payload.id, loginId: payload.loginId }, { expiresIn: '1h' });
+      return createSuccessResponse({ accessToken: newAccessToken });
+    } catch (error) {
+      return createErrorResponse(new UnauthorizedException('리프레시 토큰이 유효하지 않습니다.'));
     }
-  }
-
-  // 소셜 로그인 API
-  @Post('social-login')
-  async socialLogin(
-    @Body()
-    body: SocialLoginDto,
-  ) {
-    const { provider, providerId } = body;
-
-    return await this.authService.socialLogin({
-      provider,
-      providerId,
-    });
-  }
-
-  // NOTE: 소셜 회원가입 API
-  @Post('social-register')
-  async socialRegister(
-    @Body()
-    body: {
-      provider: 'kakao' | 'google';
-      providerId: string;
-      email: string;
-      name: string;
-    },
-  ) {
-    const { provider, providerId, email, name } = body;
-
-    return await this.authService.registerSocialUser(
-      provider,
-      providerId,
-      'test',
-      'skdicls1',
-      'skdicls1',
-      email,
-      name,
-    );
-  }
-
-  @Post('social-link')
-  async linkSocialLogin(
-    @Body() socialLoginDto: SocialLoginDto,
-    @Request() req,
-  ) {
-    const id = req.user.id;
-    return await this.authService.linkSocialAccount(id, socialLoginDto);
   }
 }
