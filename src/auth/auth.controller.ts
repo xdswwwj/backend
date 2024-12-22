@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   ConflictException,
   Controller,
@@ -51,13 +50,6 @@ export class AuthController {
     } catch (error) {
       throw new ConflictException('회원가입 후 연동할 수 있습니다.');
     }
-    // const jwt = this.authService.generateJwt(req.user);
-    // // Google로 부터 사용자 정보 반환
-    // return {
-    //   message: 'Google login successful',
-    //   user: req.user,
-    //   token: jwt,
-    // };
   }
 
   @Get('kakao')
@@ -84,33 +76,31 @@ export class AuthController {
     } catch (error) {
       console.log(error);
 
-      return createErrorResponse({
-        message: 'server error',
-        code: 500,
-      });
+      return createErrorResponse(error);
     }
   }
 
   @Post('signup')
   async signUp(@Body() createUserDto: CreateUserDto) {
-    const user = await this.authService.createUser(createUserDto);
-    return {
-      message: '회원가입 성공',
-      user,
-    };
+    try {
+      await this.authService.createUser(createUserDto);
+
+      return createSuccessResponse({});
+    } catch (error) {
+      return createErrorResponse(error);
+    }
   }
 
   @Post('login')
   async login(@Body() loginUserDto: LoginUserDto) {
-    const { loginId, password } = loginUserDto;
-    if (!loginId) {
-      throw new BadRequestException('loginId는 필수입니다.');
-    }
-    if (!password) {
-      throw new BadRequestException('password는 필수입니다.');
-    }
+    try {
+      const { loginId, password } = loginUserDto;
 
-    return await this.authService.login(loginId, password);
+      const accessToken = await this.authService.login(loginId, password);
+      return createSuccessResponse({ accessToken });
+    } catch (error) {
+      return createErrorResponse(error);
+    }
   }
 
   @Post('refresh')

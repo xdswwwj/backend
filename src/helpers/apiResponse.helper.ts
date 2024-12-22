@@ -1,3 +1,5 @@
+import { HttpException } from '@nestjs/common';
+
 // 성공 응답 타입
 export interface ApiResponseSuccess<T> {
   success: boolean;
@@ -12,10 +14,11 @@ export interface ApiResponseFailure {
   error: {
     message: string;
     code?: number;
-    details?: any;
   };
 }
 // type ApiResponse<T> = ApiResponseSuccess<T> | ApiResponseFailure;
+
+type PickedHttpException = Pick<HttpException, 'message' | 'getStatus'>;
 
 // NOTE: 성공 읍답 생성 함수
 export const createSuccessResponse = <T>(data: T): ApiResponseSuccess<T> => ({
@@ -25,16 +28,13 @@ export const createSuccessResponse = <T>(data: T): ApiResponseSuccess<T> => ({
 });
 
 // 실패 응답 생성 함수
-export const createErrorResponse = ({
-  message,
-  code,
-  details,
-}: {
-  message: string;
-  code?: number;
-  details?: any;
-}): ApiResponseFailure => ({
+export const createErrorResponse = (
+  error: PickedHttpException,
+): ApiResponseFailure => ({
   success: false,
   data: null,
-  error: { message, code, details },
+  error: {
+    message: error.message,
+    code: error.getStatus(),
+  },
 });

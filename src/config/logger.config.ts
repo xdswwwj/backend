@@ -5,7 +5,7 @@ import * as winston from 'winston';
 const logDirectory = path.join(process.cwd(), 'logs');
 const retentionDays = 10; // 10일
 
-// Ensure log directory exists
+// 나중에 크론탭으로 처리
 if (!fs.existsSync(logDirectory)) {
   fs.mkdirSync(logDirectory, { recursive: true });
 }

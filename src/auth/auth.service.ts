@@ -98,7 +98,7 @@ export class AuthService {
 
     let hashedPassword = '';
     if (!provider) {
-      const checkPassword: boolean = password === passwordConfirm;
+      const checkPassword: boolean = password !== passwordConfirm;
 
       if (checkPassword) {
         throw new ConflictException('비밀번호 확인이 일치하지 않았습니다.');
@@ -107,7 +107,7 @@ export class AuthService {
       const existingUser = await this.findUserByUserId(userId);
 
       if (existingUser) {
-        throw new ConflictException('이미 존재하는 loginId입니다.');
+        throw new ConflictException('이미 존재하는 로그인 id 입니다.');
       }
 
       hashedPassword = await this.hashPassword(password);
@@ -146,10 +146,7 @@ export class AuthService {
     const payload = { loginId: user.userId };
     const accessToken = this.jwtService.sign(payload);
 
-    return {
-      message: '로그인 성공',
-      accessToken,
-    };
+    return accessToken;
   }
 
   // NOTE: 소셜 로그인 처리
