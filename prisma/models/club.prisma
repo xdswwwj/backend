@@ -6,25 +6,58 @@ model Club {
   name        String   @unique
   image       String?
   description String?
-  members     Json? // 임시 유저 정보
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  linkedClubs LinkedClub[]
+  // LinkedUserClub과의 관계를 통해 멤버 관리
+  members ClubMember[]
 }
 
-model LinkedClub {
+model ClubMember {
   id        Int       @id @default(autoincrement())
   clubId    Int
   userId    Int
-  status    String    @default("active") // "active" 또는 "inactive" (탈퇴 상태)
+  status    String    @default("active") // "active" 또는 "inactive"
   createdAt DateTime  @default(now()) // 가입 시점
   deletedAt DateTime? // 탈퇴 시점 (NULL이면 활성 상태)
 
   club Club @relation(fields: [clubId], references: [id])
   user User @relation(fields: [userId], references: [id])
 
-  @@index([clubId]) // clubId에 대한 단일 필드 인덱스
-  @@index([userId]) // userId에 대한 단일 필드 인덱스
+  // 역방향 관계 추가
+  bung         ClubBung[] // 벙 관리
+  participants ClubBungParticipant[] // 벙 참가자 관리
+
+  @@index([clubId])
+  @@index([userId])
   @@index([clubId, userId])
+}
+
+model ClubBung {
+  id           Int       @id @default(autoincrement())
+  clubMemberId Int // ClubMember를 참조
+  createUserId Int
+  createdAt    DateTime  @default(now())
+  deletedAt    DateTime?
+
+  clubMember ClubMember @relation(fields: [clubMemberId], references: [id]) // ClubMember 참조
+  creator    User       @relation(fields: [createUserId], references: [id]) // 벙 생성자 참조
+
+  participants ClubBungParticipant[]
+}
+
+model ClubBungParticipant {
+  id           Int      @id @default(autoincrement())
+  bungId       Int
+  clubMemberId Int
+  status       String   @default("active")
+  createdAt    DateTime @default(now())
+  role         String?
+
+  bung       ClubBung   @relation(fields: [bungId], references: [id])
+  clubMember ClubMember @relation(fields: [clubMemberId], references: [id], map: "fk_club_member_participant")
+  user       User       @relation(fields: [clubMemberId], references: [id], map: "fk_user_participant")
+
+  @@index([bungId])
+  @@index([clubMemberId])
 }

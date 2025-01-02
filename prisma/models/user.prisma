@@ -11,6 +11,11 @@ model User {
   updatedAt  DateTime @updatedAt
   password   String
 
-  clubs       Club[]
-  linkedClubs LinkedClub[]
+  // 클럽과의 관계
+  clubs   Club[] /// 사용자가 운영 중인 클럽
+  members ClubMember[] /// 사용자가 멤버로 속한 클럽
+
+  // 벙과의 관계
+  bungs            ClubBung[] /// 사용자가 생성한 벙
+  bungParticipants ClubBungParticipant[] /// 사용자가 참가자로 속한 벙
 }
