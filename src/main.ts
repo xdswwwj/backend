@@ -7,6 +7,12 @@ import { HttpExceptionFilter } from './pipes/validation.pipe';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // CORS 설정
+  app.enableCors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  });
+
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   const config = new DocumentBuilder()
     .setTitle('API 문서')

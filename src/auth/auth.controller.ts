@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import { createErrorResponse, createSuccessResponse } from 'src/helpers/apiResponse.helper';
@@ -12,6 +12,35 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly jwtService: JwtService,
   ) {}
+
+  // 네이버 로그인 시작
+  @Get('naver')
+  @UseGuards(AuthGuard('naver'))
+  async naverLogin(): Promise<void> {
+    // Passport가 자동으로 네이버 로그인 페이지로 리다이렉션
+  }
+
+  // 네이버 로그인 콜백
+  @Get('naver/callback')
+  @UseGuards(AuthGuard('naver'))
+  async naverLoginCallback(@Req() req): Promise<any> {
+    try {
+      const { provider, providerId, name, image } = req.user;
+      const accessToken = await this.authService.handleSocialLogin({
+        provider,
+        providerId,
+        name,
+        image,
+      });
+
+      return createSuccessResponse({
+        accessToken,
+      });
+    } catch (error) {
+      return createErrorResponse(error);
+    }
+  }
+
   @Get('google')
   @UseGuards(AuthGuard('google'))
   async googleLogin() {
@@ -34,8 +63,6 @@ export class AuthController {
         accessToken,
       });
     } catch (error) {
-      console.log(error);
-
       return createErrorResponse(error);
     }
   }
@@ -48,7 +75,7 @@ export class AuthController {
 
   @Get('kakao/redirect')
   @UseGuards(AuthGuard('kakao'))
-  async kakaoLoginRedirect(@Req() req) {
+  async kakaoLoginRedirect(@Req() req, @Res() res) {
     try {
       const { provider, providerId, name, image } = req.user;
       const accessToken = await this.authService.handleSocialLogin({
@@ -58,12 +85,8 @@ export class AuthController {
         image,
       });
 
-      return createSuccessResponse({
-        accessToken,
-      });
+      return res.redirect(`http://localhost:5173/login-success?token=${accessToken}`);
     } catch (error) {
-      console.log(error);
-
       return createErrorResponse(error);
     }
   }
