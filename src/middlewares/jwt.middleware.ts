@@ -9,8 +9,6 @@ export class JwtMiddleware implements NestMiddleware {
   async use(req: Request, _res: Response, next: NextFunction) {
     // Authorization 헤더 확인
     const authHeader = req.headers['authorization'];
-    console.log('authHeader>>', authHeader);
-    console.log(req.headers);
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       throw new UnauthorizedException('Authorization header is missing or invalid');
     }
