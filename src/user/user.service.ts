@@ -12,6 +12,8 @@ export class UserService {
         email: true,
         image: true,
         name: true,
+        nickname: true,
+        sex: true,
         phone: true,
         provider: true,
         userId: true,

@@ -12,7 +12,6 @@ export class UserController {
     try {
       const { id } = userInfoDto;
       const user = await this.userService.findUserById(id);
-      console.log('user >>', user);
       return createSuccessResponse(user);
     } catch (error) {
       return createErrorResponse(error);

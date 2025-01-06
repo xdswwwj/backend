@@ -28,9 +28,7 @@ export const createSuccessResponse = <T>(data: T): ApiResponseSuccess<T> => ({
 });
 
 // 실패 응답 생성 함수
-export const createErrorResponse = (
-  error: PickedHttpException,
-): ApiResponseFailure => ({
+export const createErrorResponse = (error: PickedHttpException): ApiResponseFailure => ({
   success: false,
   data: null,
   error: {

@@ -1,21 +1,16 @@
-/*
-  Warnings:
+-- CreateTable
+CREATE TABLE "Club" (
+    "id" SERIAL NOT NULL,
+    "type" INTEGER NOT NULL,
+    "leaderId" INTEGER NOT NULL,
+    "name" TEXT NOT NULL,
+    "image" TEXT,
+    "description" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
-  - You are about to drop the column `members` on the `Club` table. All the data in the column will be lost.
-  - You are about to drop the `LinkedClub` table. If the table is not empty, all the data it contains will be lost.
-
-*/
--- DropForeignKey
-ALTER TABLE "LinkedClub" DROP CONSTRAINT "LinkedClub_clubId_fkey";
-
--- DropForeignKey
-ALTER TABLE "LinkedClub" DROP CONSTRAINT "LinkedClub_userId_fkey";
-
--- AlterTable
-ALTER TABLE "Club" DROP COLUMN "members";
-
--- DropTable
-DROP TABLE "LinkedClub";
+    CONSTRAINT "Club_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "ClubMember" (
@@ -52,6 +47,28 @@ CREATE TABLE "ClubBungParticipant" (
     CONSTRAINT "ClubBungParticipant_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "User" (
+    "id" SERIAL NOT NULL,
+    "userId" TEXT NOT NULL,
+    "name" TEXT,
+    "nickname" TEXT,
+    "email" TEXT,
+    "phone" TEXT,
+    "sex" INTEGER DEFAULT 1,
+    "image" TEXT,
+    "provider" TEXT,
+    "providerId" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "password" TEXT NOT NULL,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Club_name_key" ON "Club"("name");
+
 -- CreateIndex
 CREATE INDEX "ClubMember_clubId_idx" ON "ClubMember"("clubId");
 
@@ -66,6 +83,24 @@ CREATE INDEX "ClubBungParticipant_bungId_idx" ON "ClubBungParticipant"("bungId")
 
 -- CreateIndex
 CREATE INDEX "ClubBungParticipant_clubMemberId_idx" ON "ClubBungParticipant"("clubMemberId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_userId_key" ON "User"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_nickname_key" ON "User"("nickname");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_phone_key" ON "User"("phone");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_providerId_key" ON "User"("providerId");
+
+-- AddForeignKey
+ALTER TABLE "Club" ADD CONSTRAINT "Club_leaderId_fkey" FOREIGN KEY ("leaderId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ClubMember" ADD CONSTRAINT "ClubMember_clubId_fkey" FOREIGN KEY ("clubId") REFERENCES "Club"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

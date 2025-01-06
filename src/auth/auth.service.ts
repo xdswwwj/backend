@@ -2,6 +2,7 @@ import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/co
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { v4 as uuidv4 } from 'uuid';
 import { CreateUserDto } from './dto/createUser.dto';
 import { SocialLoginAndRegisterDto } from './dto/socialLoginAndRegister.dto';
 
@@ -135,8 +136,9 @@ export class AuthService {
     let user = await this.findUserByProviderId(provider, providerId);
 
     if (!user) {
+      const userId = uuidv4();
       user = await this.createUser({
-        userId: providerId,
+        userId,
         name,
         image,
         provider,
