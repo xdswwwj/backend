@@ -20,4 +20,16 @@ export class UserService {
       },
     });
   }
+
+  async updateUserInfo(userInfoDto) {
+    const { id, name, nickname, email } = userInfoDto;
+    return await this.prisma.user.update({
+      where: { id },
+      data: {
+        name,
+        nickname,
+        email,
+      },
+    });
+  }
 }
