@@ -22,13 +22,21 @@ export class UserService {
   }
 
   async updateUserInfo(userInfoDto) {
-    const { id, name, nickname, email } = userInfoDto;
+    const { id, name, nickname, email, sex } = userInfoDto;
     return await this.prisma.user.update({
       where: { id },
       data: {
         name,
         nickname,
         email,
+        sex,
+      },
+      select: {
+        id: true, // 반환할 컬럼
+        name: true,
+        nickname: true,
+        email: true,
+        sex: true,
       },
     });
   }

@@ -20,6 +20,6 @@ import { NaverStrategy } from './strategies/naver.strategy';
   ],
   controllers: [AuthController],
   providers: [AuthService, GoogleStrategy, KakaoStrategy, JwtStrategy, NaverStrategy],
-  exports: [JwtModule],
+  exports: [JwtModule, AuthService],
 })
 export class AuthModule {}
