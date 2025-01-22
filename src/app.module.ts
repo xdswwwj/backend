@@ -3,10 +3,27 @@ import { ConfigModule } from '@nestjs/config';
 import morgan from 'morgan';
 import { WinstonModule } from 'nest-winston';
 import { AuthModule } from './auth/auth.module';
+import { ClubModule } from './club/club.module';
 import { morganStream, winstonLogger } from './config/logger.config';
 import { JwtMiddleware } from './middlewares/jwt.middleware';
 import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
+export interface User {
+  id: number;
+  userId: string;
+  email: string;
+  image: string;
+  name: string;
+  nickname: string;
+}
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: User;
+    }
+  }
+}
 
 @Module({
   imports: [
@@ -25,6 +42,7 @@ import { UserModule } from './user/user.module';
     // 모듈
     AuthModule,
     UserModule,
+    ClubModule,
   ],
   controllers: [],
   providers: [],

@@ -2,6 +2,23 @@ import { Injectable, NestMiddleware, UnauthorizedException } from '@nestjs/commo
 import { JwtService } from '@nestjs/jwt';
 import { NextFunction, Request, Response } from 'express';
 
+export interface User {
+  id: number;
+  userId: string;
+  email: string;
+  provider: string;
+  iat: number;
+  exp: number;
+}
+
+declare global {
+  namespace Express {
+    interface Request {
+      currentUser?: User;
+    }
+  }
+}
+
 @Injectable()
 export class JwtMiddleware implements NestMiddleware {
   constructor(private readonly jwtService: JwtService) {}
@@ -22,10 +39,9 @@ export class JwtMiddleware implements NestMiddleware {
         secret: process.env.JWT_SECRET || 'defaultSecret',
       });
 
-      // 요청 객체에 사용자 정보 추가 (선택)
       req.user = decoded;
 
-      next(); // 다음 미들웨어 또는 핸들러로 전달
+      next();
     } catch (error) {
       console.error('Invalid JWT token:', error.message);
       throw new UnauthorizedException('Invalid or expired token');
