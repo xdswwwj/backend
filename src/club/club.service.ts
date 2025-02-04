@@ -1,28 +1,49 @@
 import { Injectable } from '@nestjs/common';
-import { CreateClubDto } from './dto/create-club.dto';
-import { UpdateClubDto } from './dto/update-club.dto';
+import { PaginationDto } from 'src/global/dto/common.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateClubDto } from './dto/createClub.dto';
 
 @Injectable()
 export class ClubService {
-  create(createClubDto: CreateClubDto) {
-    console.log(createClubDto);
-    return 'This action adds a new club';
+  constructor(private readonly prisma: PrismaService) {}
+
+  async create(createClubDto: CreateClubDto, image: string, leaderId: number) {
+    const { name, description } = createClubDto;
+    const club = await this.prisma.club.create({
+      data: {
+        name,
+        description,
+        image,
+        leaderId,
+      },
+    });
+    return club;
   }
 
-  findAll() {
-    return `This action returns all club`;
-  }
+  async getClubList(paginationDto: PaginationDto) {
+    const { page, limit } = paginationDto;
 
-  findOne(id: number) {
-    return `This action returns a #${id} club`;
-  }
+    const skip = (page - 1) * limit; // 페이지에 맞는 offset 계산
+    const take = limit;
 
-  update(id: number, updateClubDto: UpdateClubDto) {
-    console.log(updateClubDto);
-    return `This action updates a #${id} club`;
-  }
+    const [clubs, total] = await Promise.all([
+      this.prisma.club.findMany({
+        skip,
+        take,
+        orderBy: { createdAt: 'desc' }, // 최신순 정렬
+      }),
+      this.prisma.club.count(), // 전체 개수 카운트
+    ]);
 
-  remove(id: number) {
-    return `This action removes a #${id} club`;
+    return {
+      success: true,
+      data: clubs,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 }

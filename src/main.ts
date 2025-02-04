@@ -19,6 +19,15 @@ async function bootstrap() {
     .setDescription('API에 대한 설명')
     .setVersion('1.0')
     .addTag('Users') // 태그 추가 (옵션)
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        in: 'header',
+      },
+      'access-token',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

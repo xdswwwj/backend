@@ -1,6 +1,5 @@
 model Club {
   id          Int      @id @default(autoincrement())
-  type        Int
   leaderId    Int
   leader      User     @relation(fields: [leaderId], references: [id])
   name        String   @unique
