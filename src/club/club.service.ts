@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PaginationDto } from 'src/global/dto/common.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateClubDto } from './dto/createClub.dto';
@@ -21,18 +22,36 @@ export class ClubService {
   }
 
   async getClubList(paginationDto: PaginationDto) {
-    const { page, limit } = paginationDto;
+    const { page, limit = 1, search } = paginationDto;
 
     const skip = (page - 1) * limit; // 페이지에 맞는 offset 계산
     const take = limit;
 
+    const where: Prisma.ClubWhereInput = search
+      ? {
+          name: {
+            contains: search,
+            mode: 'insensitive', // 대소문자 없이
+          },
+        }
+      : {};
+
     const [clubs, total] = await Promise.all([
       this.prisma.club.findMany({
+        where,
         skip,
         take,
         orderBy: { createdAt: 'desc' }, // 최신순 정렬
+        include: {
+          leader: {
+            select: { id: true, name: true, email: true, image: true },
+          },
+          _count: {
+            select: { members: true },
+          },
+        },
       }),
-      this.prisma.club.count(), // 전체 개수 카운트
+      this.prisma.club.count({ where }), // 전체 개수 카운트
     ]);
 
     return {
