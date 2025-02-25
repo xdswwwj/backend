@@ -3,7 +3,7 @@ module.exports = {
     {
       name: 'backend',
       script: 'dist/main.js', // 실행할 파일 (NestJS 빌드된 엔트리)
-      instances: 'max', // 클러스터 모드로 CPU 코어 수만큼 실행
+      instances: 4, // 클러스터 모드로 CPU 코어 수만큼 실행
       exec_mode: 'cluster', // fork(단일 프로세스) 또는 cluster(멀티 프로세스)
       autorestart: true, // 자동 재시작
       watch: false, // 소스 코드 변경 감지하여 자동 재시작 여부
