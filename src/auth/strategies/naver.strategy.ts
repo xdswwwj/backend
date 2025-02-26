@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-naver-v2';
-import { FRONT_BASE_URL } from 'src/config/global.config';
+import { BACK_BASE_URL } from 'src/config/global.config';
 
 @Injectable()
 export class NaverStrategy extends PassportStrategy(Strategy, 'naver') {
@@ -9,7 +9,7 @@ export class NaverStrategy extends PassportStrategy(Strategy, 'naver') {
     super({
       clientID: process.env.NAVER_CLIENT_ID,
       clientSecret: process.env.NAVER_CLIENT_SECRET,
-      callbackURL: `${FRONT_BASE_URL}${process.env.NAVER_CALLBACK_URL}`,
+      callbackURL: `${BACK_BASE_URL}${process.env.NAVER_CALLBACK_URL}`,
     });
   }
 
