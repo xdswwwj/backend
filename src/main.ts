@@ -7,7 +7,7 @@ import { HttpExceptionFilter } from './pipes/validation.pipe';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
+  console.log(process.env.NODE_ENV);
   // CORS 설정
   app.enableCors({
     origin: FRONT_BASE_URL,
