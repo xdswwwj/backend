@@ -12,6 +12,7 @@ module.exports = {
         NODE_ENV: 'production',
         PORT: 3000,
       },
+      env_file: '.env',
     },
     // {
     //   name: 'service-worker',
