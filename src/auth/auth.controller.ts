@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
+import { FRONT_BASE_URL } from 'src/config/global.config';
 import { createErrorResponse, createSuccessResponse } from 'src/helpers/apiResponse.helper';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/createUser.dto';
@@ -85,7 +86,7 @@ export class AuthController {
         image,
       });
 
-      return res.redirect(`http://localhost:5173/login-success?token=${accessToken}`);
+      return res.redirect(`${FRONT_BASE_URL}/login-success?token=${accessToken}`);
     } catch (error) {
       return createErrorResponse(error);
     }
