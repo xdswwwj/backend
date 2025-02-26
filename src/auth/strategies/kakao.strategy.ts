@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-kakao';
+import { FRONT_BASE_URL } from 'src/config/global.config';
 
 @Injectable()
 export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
@@ -8,7 +9,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
     super({
       clientID: process.env.KAKAO_CLIENT_ID,
       clientSecret: process.env.KAKAO_CLIENT_SECRET,
-      callbackURL: process.env.KAKAO_CALLBACK_URL,
+      callbackURL: `${FRONT_BASE_URL}${process.env.KAKAO_CALLBACK_URL}`,
     });
   }
 
