@@ -14,11 +14,6 @@ module.exports = {
       },
       env_file: '.env',
     },
-    // {
-    //   name: 'service-worker',
-    //   script: './service-worker/index.js', // 실행할 파일 정확히 지정
-    //   watch: ['./service-worker'], // service-worker 폴더 내 변경 사항 감지
-    // },
   ],
 
   deploy: {
