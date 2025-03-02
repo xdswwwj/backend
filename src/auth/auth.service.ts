@@ -1,6 +1,7 @@
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { createErrorResponse } from 'src/helpers/apiResponse.helper';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateUserDto } from './dto/createUser.dto';
@@ -132,26 +133,30 @@ export class AuthService {
 
   async handleSocialLogin(socialLoginAndRegisterDto: SocialLoginAndRegisterDto) {
     const { provider, providerId, name, image } = socialLoginAndRegisterDto;
+    try {
+      console.log('여기다');
+      let user = await this.findUserByProviderId(provider, providerId);
 
-    let user = await this.findUserByProviderId(provider, providerId);
+      console.log('user >>', user);
+      if (!user) {
+        const userId = uuidv4();
+        user = await this.createUser({
+          userId,
+          name,
+          image,
+          provider,
+          providerId,
+          password: '',
+          passwordConfirm: '',
+        });
+      }
 
-    console.log('user >>', user);
-    if (!user) {
-      const userId = uuidv4();
-      user = await this.createUser({
-        userId,
-        name,
-        image,
-        provider,
-        providerId,
-        password: '',
-        passwordConfirm: '',
-      });
+      const accessToken = this.generateJwt(user);
+      console.log('accessToken >>', accessToken);
+
+      return accessToken;
+    } catch (error) {
+      return createErrorResponse(error);
     }
-
-    const accessToken = this.generateJwt(user);
-    console.log('accessToken >>', accessToken);
-
-    return accessToken;
   }
 }
