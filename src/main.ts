@@ -5,26 +5,32 @@ import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './pipes/validation.pipe';
 
 async function bootstrap() {
+  console.log('🚀 서버 부팅 시작'); // 여기가 찍히는지 확인
+
   const app = await NestFactory.create(AppModule);
+  console.log('✅ NestJS 애플리케이션 생성 완료');
+
   const whitelist = ['http://localhost:5173', 'https://sanirang.kr', 'https://www.sanirang.kr'];
-  // CORS 설정
   app.enableCors({
     origin: (origin, callback) => {
       if (!origin || whitelist.includes(origin)) {
-        callback(null, true); // 화이트리스트에 포함된 도메인은 허용
+        callback(null, true);
       } else {
-        callback(new Error('Not allowed by CORS')); // 차단
+        console.log('🚨 CORS 차단됨:', origin); // CORS에서 차단된 경우 확인
+        callback(new Error('Not allowed by CORS'));
       }
     },
     credentials: true,
   });
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  console.log('🛠 ValidationPipe 설정 완료');
+
   const config = new DocumentBuilder()
     .setTitle('API 문서')
     .setDescription('API에 대한 설명')
     .setVersion('1.0')
-    .addTag('Users') // 태그 추가 (옵션)
+    .addTag('Users')
     .addBearerAuth(
       {
         type: 'http',
@@ -38,7 +44,12 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
+  console.log('📄 Swagger 문서 설정 완료');
+
   app.useGlobalFilters(new HttpExceptionFilter());
+  console.log('🚨 HttpExceptionFilter 등록 완료');
+
   await app.listen(process.env.PORT ?? 3000);
+  console.log(`🚀 서버가 실행 중입니다! PORT: ${process.env.PORT ?? 3000}`);
 }
 bootstrap();
