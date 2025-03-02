@@ -33,6 +33,6 @@ export const createErrorResponse = (error: PickedHttpException): ApiResponseFail
   data: null,
   error: {
     message: error.message,
-    code: error?.getStatus(),
+    code: error?.getStatus ? error.getStatus() : 500,
   },
 });
