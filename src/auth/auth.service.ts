@@ -135,6 +135,7 @@ export class AuthService {
 
     let user = await this.findUserByProviderId(provider, providerId);
 
+    console.log('user >>', user);
     if (!user) {
       const userId = uuidv4();
       user = await this.createUser({
@@ -149,6 +150,7 @@ export class AuthService {
     }
 
     const accessToken = this.generateJwt(user);
+    console.log('accessToken >>', accessToken);
 
     return accessToken;
   }
