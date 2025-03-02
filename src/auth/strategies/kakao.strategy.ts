@@ -15,6 +15,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
 
   async validate(accessToken: string, _refreshToken: string, profile: Profile, done: Function): Promise<any> {
     console.log('--------------------');
+    console.log('🔥 Kakao 로그인 성공:', profile);
     const { id, username, _json: kakaoAccount } = profile;
     const user = {
       provider: 'kakao',
