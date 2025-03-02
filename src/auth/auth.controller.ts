@@ -78,6 +78,7 @@ export class AuthController {
   @UseGuards(AuthGuard('kakao'))
   async kakaoLoginRedirect(@Req() req, @Res() res) {
     try {
+      console.log('🔥 Kakao 로그인 완료, 사용자 정보:', req.user);
       const { provider, providerId, name, image } = req.user;
       const accessToken = await this.authService.handleSocialLogin({
         provider,
