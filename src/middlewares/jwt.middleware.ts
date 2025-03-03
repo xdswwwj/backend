@@ -35,7 +35,7 @@ export class JwtMiddleware implements NestMiddleware {
     console.log('token >>', token);
     try {
       // 토큰 검증 및 디코딩
-      const decoded = this.jwtService.verify(token, {
+      const decoded = await this.jwtService.verifyAsync(token, {
         secret: process.env.JWT_SECRET || 'defaultSecret',
       });
 
