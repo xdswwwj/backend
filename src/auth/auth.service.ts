@@ -24,8 +24,7 @@ export class AuthService {
     };
     return this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
-      algorithm: 'HS256', // ✅ 여기 확인!
-      expiresIn: '1h',
+      expiresIn: '24h',
     });
   }
 
