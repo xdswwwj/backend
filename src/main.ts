@@ -49,6 +49,9 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
   console.log('🚨 HttpExceptionFilter 등록 완료');
 
+  const now = new Date();
+  console.log('now >>', now);
+
   await app.listen(process.env.PORT ?? 3000);
   console.log(`🚀 서버가 실행 중입니다! PORT: ${process.env.PORT ?? 3000}`);
 }
