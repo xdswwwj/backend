@@ -49,6 +49,10 @@ declare global {
   exports: [],
 })
 export class AppModule implements NestModule {
+  constructor() {
+    process.env.TZ = 'Asia/Seoul'; // ✅ NestJS 전체에서 Timezone을 KST로 설정
+    console.log('🕒 NestJS 타임존 설정 완료:', process.env.TZ);
+  }
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(morgan('combined', { stream: morganStream })).forRoutes('*');
     consumer

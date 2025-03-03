@@ -120,7 +120,7 @@ export class AuthController {
   async refreshToken(@Body('refreshToken') token: string) {
     try {
       const payload = this.jwtService.verify(token, {
-        secret: process.env.JWT_SECRET,
+        secret: process.env.JWT_SECRET || 'defaultSecret',
       });
       const newAccessToken = this.jwtService.sign({ id: payload.id, loginId: payload.loginId }, { expiresIn: '1h' });
       return createSuccessResponse({ accessToken: newAccessToken });
