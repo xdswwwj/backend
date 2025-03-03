@@ -22,7 +22,11 @@ export class AuthService {
       email: user?.email,
       provider: user?.provider,
     };
-    return this.jwtService.sign(payload);
+    return this.jwtService.sign(payload, {
+      secret: process.env.JWT_SECRET,
+      algorithm: 'HS256', // ✅ 여기 확인!
+      expiresIn: '1h',
+    });
   }
 
   // 비밀번호 암호화
