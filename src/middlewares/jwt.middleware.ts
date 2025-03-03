@@ -32,7 +32,7 @@ export class JwtMiddleware implements NestMiddleware {
 
     // Bearer 토큰 추출
     const token = authHeader.split(' ')[1];
-
+    console.log('token >>', token);
     try {
       // 토큰 검증 및 디코딩
       const decoded = this.jwtService.verify(token, {
