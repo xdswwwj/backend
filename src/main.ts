@@ -5,8 +5,6 @@ import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './pipes/validation.pipe';
 
 async function bootstrap() {
-  console.log('🚀 서버 부팅 시작'); // 여기가 찍히는지 확인
-
   const app = await NestFactory.create(AppModule);
   console.log('✅ NestJS 애플리케이션 생성 완료');
 
