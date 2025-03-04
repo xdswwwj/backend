@@ -22,10 +22,7 @@ export class AuthService {
       email: user?.email,
       provider: user?.provider,
     };
-    return this.jwtService.sign(payload, {
-      secret: process.env.JWT_SECRET,
-      expiresIn: '24h',
-    });
+    return this.jwtService.sign(payload);
   }
 
   // 비밀번호 암호화
