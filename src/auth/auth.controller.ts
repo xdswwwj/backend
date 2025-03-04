@@ -86,7 +86,6 @@ export class AuthController {
         name,
         image,
       });
-      console.log('accessToken', accessToken);
       return res.redirect(`${FRONT_BASE_URL}/login-success?token=${accessToken}`);
     } catch (error) {
       return createErrorResponse(error);

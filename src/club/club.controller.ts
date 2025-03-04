@@ -20,10 +20,8 @@ export class ClubController {
   ) {
     try {
       const club = await this.clubService.create(createClubDto, image?.filename, req.user.id);
-      console.log(club);
       return createSuccessResponse(club);
     } catch (error) {
-      console.log('error  >>', error);
       return createErrorResponse(error);
     }
   }

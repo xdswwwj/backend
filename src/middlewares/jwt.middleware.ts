@@ -32,8 +32,6 @@ export class JwtMiddleware implements NestMiddleware {
 
     // Bearer 토큰 추출
     const token = authHeader.split(' ')[1];
-    console.log('token >>', token);
-    console.log('process.env.JWT_SECRET >>', process.env.JWT_SECRET);
     try {
       // 토큰 검증 및 디코딩
       const decoded = await this.jwtService.verifyAsync(token, {
