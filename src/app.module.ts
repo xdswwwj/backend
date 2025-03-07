@@ -8,6 +8,7 @@ import { morganStream, winstonLogger } from './config/logger.config';
 import { JwtMiddleware } from './middlewares/jwt.middleware';
 import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
+import { BoardModule } from './board/board.module';
 export interface User {
   id: number;
   userId: string;
@@ -43,6 +44,7 @@ declare global {
     AuthModule,
     UserModule,
     ClubModule,
+    BoardModule,
   ],
   controllers: [],
   providers: [],

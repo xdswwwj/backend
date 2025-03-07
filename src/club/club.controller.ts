@@ -28,8 +28,8 @@ export class ClubController {
 
   @Get('list')
   @ApiOperation({ summary: '클럽 리스트 가져오기 (페이지네이션)' })
-  async getClubList(@Query() paginationDto: PaginationDto) {
-    return this.clubService.getClubList(paginationDto);
+  async getClubList(@Query() paginationDto: PaginationDto, @Req() req: RequestCustom) {
+    return this.clubService.getClubList(paginationDto, req.user.id);
   }
 
   // @Get()

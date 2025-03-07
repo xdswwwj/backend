@@ -21,20 +21,36 @@ export class ClubService {
     return club;
   }
 
-  async getClubList(paginationDto: PaginationDto) {
-    const { page, limit = 20, search } = paginationDto;
+  async getClubList(paginationDto: PaginationDto, userId: number) {
+    const { page, limit, search, isMyClub } = paginationDto;
 
     const skip = (page - 1) * limit; // 페이지에 맞는 offset 계산
     const take = limit;
 
-    const where: Prisma.ClubWhereInput = search
-      ? {
-          name: {
-            contains: search,
-            mode: 'insensitive', // 대소문자 없이
+    // 검색어 필터 추가
+    let baseWhere: Prisma.ClubWhereInput = {};
+    if (search) {
+      baseWhere = {
+        ...baseWhere,
+        name: {
+          contains: search,
+          mode: 'insensitive',
+        },
+      };
+    }
+    let where: Prisma.ClubWhereInput = baseWhere;
+    if (isMyClub) {
+      where = {
+        AND: [
+          baseWhere,
+          {
+            OR: [{ leaderId: userId }, { members: { some: { id: userId } } }],
           },
-        }
-      : {};
+        ],
+      };
+    }
+
+    console.log('where >>', where);
 
     const [clubs, total] = await Promise.all([
       this.prisma.club.findMany({

@@ -20,4 +20,8 @@ export class PaginationDto {
   @ApiProperty({ description: '검색어', example: '검색어', required: false })
   @IsOptional()
   search: string;
+
+  @ApiProperty({ description: '나의 클럽', example: true, required: false })
+  @IsOptional()
+  isMyClub: boolean = false;
 }
