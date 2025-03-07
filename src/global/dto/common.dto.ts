@@ -15,7 +15,7 @@ export class PaginationDto {
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  limit: number = 1;
+  limit: number = 20;
 
   @ApiProperty({ description: '검색어', example: '검색어', required: false })
   @IsOptional()
