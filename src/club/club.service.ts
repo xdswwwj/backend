@@ -22,7 +22,7 @@ export class ClubService {
   }
 
   async getClubList(paginationDto: PaginationDto) {
-    const { page, limit = 1, search } = paginationDto;
+    const { page, limit = 20, search } = paginationDto;
 
     const skip = (page - 1) * limit; // 페이지에 맞는 offset 계산
     const take = limit;
