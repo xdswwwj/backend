@@ -39,18 +39,20 @@ export class ClubService {
       };
     }
     let where: Prisma.ClubWhereInput = baseWhere;
+    console.log('isMyClub >>', isMyClub);
+    console.log('userId1 >>', userId);
     if (isMyClub) {
       where = {
         AND: [
           baseWhere,
           {
-            OR: [{ leaderId: userId }, { members: { some: { id: userId } } }],
+            OR: [{ leaderId: userId }, { members: { some: { userId } } }],
           },
         ],
       };
     }
 
-    console.log('where >>', where);
+    console.dir(where);
 
     const [clubs, total] = await Promise.all([
       this.prisma.club.findMany({
