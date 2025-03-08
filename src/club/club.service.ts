@@ -40,8 +40,8 @@ export class ClubService {
     }
     let where: Prisma.ClubWhereInput = baseWhere;
     console.log('isMyClub >>', isMyClub);
-    console.log('userId1 >>', userId);
-    if (isMyClub) {
+    console.log('userId >>', userId);
+    if (isMyClub === true) {
       where = {
         AND: [
           baseWhere,
